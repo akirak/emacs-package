@@ -1,10 +1,11 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'melpa-check'
+description: 'Lint and test an Emacs Lisp package repository'
+author: 'Akira Komamura'
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+  config-file:
+    description: 'Location of the config file (or directory containing default.nix)'
+    required: false
+    default: '.melpa-check'
 runs:
   using: 'node12'
   main: 'dist/index.js'

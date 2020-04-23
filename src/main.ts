@@ -1,18 +1,29 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as exec from '@actions/exec'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    core.startGroup('Install melpa-check CLI')
+    await exec.exec('nix-env', [
+      '-iA',
+      'cli.gh-action',
+      '-f',
+      'https://github.com/akirak/melpa-check/archive/v3.tar.gz'
+    ])
+    core.info('Running melpa-check --version')
+    await exec.exec('melpa-check', ['--version'])
+    core.endGroup()
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    core.startGroup('Install dependencies of melpa-check')
+    await exec.exec('melpa-check', ['deps'])
+    core.endGroup()
 
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    core.setFailed(error.message)
+    core.startGroup('Check the configuration')
+    const file = core.getInput('config-file')
+    await exec.exec('melpa-check', ['config', '-f', file])
+    core.endGroup()
+  } catch (e) {
+    core.setFailed(e.message)
   }
 }
 
