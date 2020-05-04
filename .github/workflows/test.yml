@@ -1,4 +1,4 @@
-name: "build"
+name: "test"
 on: # rebuild any PRs and main branch changes
   pull_request:
   schedule:
