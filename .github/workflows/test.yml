@@ -18,3 +18,4 @@ jobs:
     - uses: ./
       with:
         config-file: example/.melpa-check
+    - run: melpa-check --version
