@@ -972,16 +972,69 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const exec = __importStar(__webpack_require__(986));
+const fs = __importStar(__webpack_require__(747));
+// Run a system process and return its standard output.
+function getCommandOutput(cmd, args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let output = '';
+        const options = {
+            listeners: {
+                stdout: (data) => {
+                    output += data.toString();
+                }
+            }
+        };
+        yield exec.exec(cmd, args, options);
+        return output;
+    });
+}
+// Test if melpa-check is installed using niv.
+function hasMelpaCheck() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const output = yield getCommandOutput('nix-instantiate', [
+            '--eval',
+            '--expr',
+            'builtins.typeOf (import ./nix/sources.nix).melpa-check'
+        ]);
+        return /^"set"\s*$/.test(output);
+    });
+}
+// Retrieve the store path of the CLI from nix-build.
+function getStorePath() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const output = yield getCommandOutput('nix-build', [
+            '--expr',
+            '(import (import ./nix/sources.nix).melpa-check {}).cli',
+            '-A',
+            'gh-action'
+        ]);
+        const m = output.match(/^[^\s]+/);
+        if (!m) {
+            throw new Error('null output');
+        }
+        return m[0];
+    });
+}
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             core.startGroup('Install melpa-check CLI');
-            yield exec.exec('nix-env', [
-                '-iA',
-                'cli.gh-action',
-                '-f',
-                'https://github.com/akirak/melpa-check/archive/v3.tar.gz'
-            ]);
+            // Check if nix/sources.nix (which is created by niv) exists
+            // and melpa-check is installed by it
+            if (fs.existsSync('nix/sources.nix') && (yield hasMelpaCheck())) {
+                core.info('Installing melpa-check specified in nix/sources.nix...');
+                const path = yield getStorePath();
+                yield exec.exec('nix-env', ['-i', path]);
+            }
+            else {
+                core.info('Installing the latest version of melpa-check...');
+                yield exec.exec('nix-env', [
+                    '-iA',
+                    'cli.gh-action',
+                    '-f',
+                    'https://github.com/akirak/melpa-check/archive/v3.tar.gz'
+                ]);
+            }
             core.info('Running melpa-check --version');
             yield exec.exec('melpa-check', ['--version']);
             core.endGroup();
