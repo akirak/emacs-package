@@ -1,5 +1,8 @@
 * GitHub Action for Emacs Packages
 This is a GitHub action which installs and configures [[https://github.com/akirak/melpa-check/][melpa-check]] for running CI on Emacs packages.
+
+[[https://github.com/akirak/emacs-package/actions][https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fakirak%2Femacs-package%2Fbadge%3Fref%3Dmaster&style=flat-square]]
+
 ** Table of contents
 :PROPERTIES:
 :TOC: siblings
