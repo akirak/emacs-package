@@ -41,6 +41,8 @@ A minimal workflow configuration for a single package would be as follows:
       - run: melpa-check buttercup
 #+end_src
 
+That is, install =melpa-check= using this action and run tests using it.
+
 You can also use matrices for running tests on multiple versions of Emacs.
 
 =melpa-check= also supports repositories with multiple packages.
