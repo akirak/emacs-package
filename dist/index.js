@@ -1003,6 +1003,7 @@ function hasMelpaCheck() {
 function getStorePath() {
     return __awaiter(this, void 0, void 0, function* () {
         const output = yield getCommandOutput('nix-build', [
+            '--no-out-link',
             '--expr',
             '(import (import ./nix/sources.nix).melpa-check {}).cli',
             '-A',
