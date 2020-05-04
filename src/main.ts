@@ -29,6 +29,7 @@ async function hasMelpaCheck(): Promise<boolean> {
 // Retrieve the store path of the CLI from nix-build.
 async function getStorePath(): Promise<string> {
   const output = await getCommandOutput('nix-build', [
+    '--no-out-link',
     '--expr',
     '(import (import ./nix/sources.nix).melpa-check {}).cli',
     '-A',
