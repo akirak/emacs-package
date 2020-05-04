@@ -1,0 +1,51 @@
+* GitHub Action for Emacs Packages
+This is a GitHub action which installs and configures [[https://github.com/akirak/melpa-check/][melpa-check]] for running CI on Emacs packages.
+** Table of contents
+:PROPERTIES:
+:TOC: siblings
+:END:
+-  [[#usage][Usage]]
+
+** Usage
+=melpa-check= depends on [[https://nixos.org/nix/][Nix]], which isn't installed by this action.
+You have to install Nix first.
+You can use [[https://github.com/cachix/install-nix-action][cachix/install-nix-action]] for this purpose.
+
+A minimal workflow configuration for a single package would be as follows:
+
+#+begin_src yaml
+  name: "your-awesome-package"
+  on:
+    pull_request:
+    push:
+      paths-ignore:
+      - '**/*.md'
+      - '**/*.org'
+
+  jobs:
+    CI:
+      runs-on: ubuntu-latest
+      steps:
+      # You have to install Nix somehow.
+      - uses: cachix/install-nix-action@v8
+      # You also have to check out your own repository.
+      - uses: actions/checkout@v2
+      # Install and configure melpa-check using this action.
+      - uses: akirak/emacs-package
+      # Use melpa-check to check your package.
+      - run: melpa-check lint
+      - run: melpa-check byte-compile
+      - run: melpa-check buttercup
+#+end_src
+
+You can also use matrices for running tests on multiple versions of Emacs.
+
+=melpa-check= also supports repositories with multiple packages.
+** COMMENT Meta :noexport:
+:PROPERTIES:
+:TOC:      ignore
+:END:
+# The COMMENT keyword prevents GitHub's renderer from showing this entry.
+# Local Variables:
+# eval: (when (require (quote org-make-toc) nil t) (org-make-toc-mode t))
+# End:
