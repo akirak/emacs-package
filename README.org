@@ -1,3 +1,5 @@
+*This project is no longer maintained.* Use [[https://github.com/akirak/elinter][elinter]] instead.
+
 * GitHub Action for Emacs Packages
 This is a GitHub action which installs and configures [[https://github.com/akirak/melpa-check/][melpa-check]] for running CI on Emacs packages.
 
