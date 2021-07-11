@@ -6,6 +6,7 @@ on: # rebuild any PRs and main branch changes
     - cron: '17 5 * * *'
   push:
     paths-ignore:
+    - '**/*.ts'
     - '**/*.md'
     - '**/*.org'
 

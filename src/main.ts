@@ -1,6 +1,8 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
+import * as io from '@actions/io'
 import * as fs from 'fs'
+import * as os from 'os'
 
 // Run a system process and return its standard output.
 async function getCommandOutput(cmd: string, args: string[]): Promise<string> {
@@ -44,6 +46,11 @@ async function getStorePath(): Promise<string> {
 
 async function run(): Promise<void> {
   try {
+    const cacheDir = path.join(os.homedir(), '.melpa-check', 'cache')
+    const elpaCacheDir = path.join(cacheDir, 'elpa')
+    await io.mkdirP(elpaCacheDir)
+    core.exportVariable('ELPA_USER_DIR', elpaCacheDir)
+
     core.startGroup('Install melpa-check CLI')
 
     // Check if nix/sources.nix (which is created by niv) exists
